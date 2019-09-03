@@ -44,7 +44,7 @@
 
     <q-table
       title="Time Table"
-      :data="teacher.timeTableList"
+      :data="timeTables"
       :columns="columns"
       row-key="name"
     />
@@ -73,9 +73,9 @@ export default {
         lastName: '',
         postNominal: '',
         department: '',
-        timeTableList: []
+        timeTables: []
       },
-      teachers: [],
+      timeTables: [],
       columns: [
         { name: 'to', label: 'To', align: 'left', field: 'to', sortable: true },
         { name: 'from', label: 'From', align: 'left', field: 'from', sortable: true }
@@ -86,8 +86,14 @@ export default {
   methods: {
     onSubmit () {
       const self = this
+      this.teacher.timeTables = self.timeTables.map(value => {
+        return {
+          from: moment(value.from).valueOf(),
+          to: moment(value.to).valueOf()
+        }
+      })
 
-      if (self.teacher.id !== 0) {
+      if (this.teacher.id !== 0) {
         axios.post('/api/teacher/save', this.teacher)
           .then(function (response) {
             if (response.status === 200) {
@@ -110,6 +116,13 @@ export default {
     },
 
     onReset () {
+      this.teacher.id = 0
+      this.teacher.firstName = ''
+      this.teacher.middleName = ''
+      this.teacher.lastName = ''
+      this.teacher.postNominal = ''
+      this.teacher.department = ''
+      this.teacher.timeTables = []
     },
 
     filterFn (val, update) {
@@ -121,11 +134,9 @@ export default {
     },
 
     onAdd () {
-      const self = this
-
-      self.teacher.timeTableList.push({
-        from: moment(self.timeTable.from).format('YYYY-MM-DD HH:mm').toString(),
-        to: moment(self.timeTable.to).format('YYYY-MM-DD HH:mm').toString()
+      this.timeTables.push({
+        from: moment(this.timeTable.from).format('YYYY-MM-DD HH:mm').toString(),
+        to: moment(this.timeTable.to).format('YYYY-MM-DD HH:mm').toString()
       }
       )
     },
@@ -144,6 +155,7 @@ export default {
         })
     }
   },
+
   created: function () {
     this.initData()
   }

@@ -36,6 +36,8 @@
 </template>
 
 <script>
+import axios from 'axios'
+
 export default {
   name: 'Subject',
   data () {
@@ -50,25 +52,34 @@ export default {
   },
   methods: {
     onSubmit () {
-      if (this.accept !== true) {
-        this.$q.notify({
-          color: 'red-5',
-          textColor: 'white',
-          icon: 'fas fa-exclamation-triangle',
-          message: ''
+      const self = this
+
+      axios.post('/api/subject/save', this.subject)
+        .then(function (response) {
+          if (response.status === 200) {
+            self.$q.notify({
+              color: 'green-4',
+              textColor: 'white',
+              icon: 'fas fa-check-circle',
+              message: 'Submitted'
+            })
+          } else {
+            self.$q.notify({
+              color: 'red-5',
+              textColor: 'white',
+              icon: 'fas fa-exclamation-triangle',
+              message: 'Failed'
+            })
+          }
         })
-      } else {
-        this.$q.notify({
-          color: 'green-4',
-          textColor: 'white',
-          icon: 'fas fa-check-circle',
-          message: 'Submitted'
-        })
-      }
     },
 
     onReset () {
+      this.subject.id = 0
+      this.subject.name = ''
+      this.subject.code = ''
     }
+
   }
 }
 </script>

@@ -18,9 +18,10 @@
         hide-selected
         fill-input
         input-debounce="0"
-        :options="teachers"
-        @filter="filterFn"
+        :options="teacherOptions"
+        @filter="filterTeacherFn"
         label="Teacher"
+        emit-value
       >
         <template v-slot:no-option>
           <q-item>
@@ -60,13 +61,14 @@
 
       <q-select
         filled
-        v-model="teacher.subject"
+        v-model="subject"
         use-input
         hide-selected
         fill-input
         input-debounce="0"
-        :options="subjects"
-        @filter="filterFn"
+        :options="subjectOptions"
+        @filter="filterSubjectFn"
+        emit-value
         label="Subject"
       >
         <template v-slot:no-option>
@@ -80,12 +82,16 @@
 
       <q-table
         title="Time Table"
-        :data="teacher.timeTableList"
+        :data="teacher.timeTables"
         :columns="columns"
-        row-key="name"
+        row-key="__index"
         selection="single"
-        :selected.sync="selected"
+        :selected.sync="selectedTimeTable"
       />
+
+      <div class="q-mt-md">
+        Selected: {{ JSON.stringify(selectedTimeTable.to) }}
+      </div>
 
       <div>
         <q-btn label="Submit" type="submit" color="primary"/>
@@ -98,6 +104,10 @@
 
 <script>
 import moment from 'moment'
+import axios from 'axios'
+
+const teacherOptions = []
+const subjectOptions = []
 
 export default {
   name: 'Schedule',
@@ -122,15 +132,17 @@ export default {
         lastName: '',
         postNominal: '',
         department: '',
-        timeTableList: []
+        timeTables: []
       },
-      selected: [],
-      teachers: [],
-      subjects: [],
+      subject: {
+        id: 0,
+        name: '',
+        code: ''
+      },
+      selectedTimeTable: [],
+      teacherOptions: teacherOptions,
+      subjectOptions: subjectOptions,
       columns: [
-        {
-          name: 'name', label: 'Name', align: 'left', field: 'name', sortable: true
-        },
         { name: 'to', label: 'To', align: 'left', field: 'to', sortable: true },
         { name: 'from', label: 'From', align: 'left', field: 'from', sortable: true }
       ],
@@ -140,32 +152,81 @@ export default {
   },
   methods: {
     onSubmit () {
-      if (this.accept !== true) {
-        this.$q.notify({
-          color: 'red-5',
-          textColor: 'white',
-          icon: 'fas fa-exclamation-triangle',
-          message: ''
+      const self = this
+
+      this.schedule.teachId = this.teacher.id
+      this.schedule.subject = this.subject.code
+      this.schedule.from = this.selectedTimeTable[0].from
+      this.schedule.to = this.selectedTimeTable[0].to
+
+      axios.post('/api/schedule/create', this.schedule)
+        .then(function (response) {
+          if (response.status === 200) {
+            self.$q.notify({
+              color: 'green-4',
+              textColor: 'white',
+              icon: 'fas fa-check-circle',
+              message: 'Submitted'
+            })
+          } else {
+            self.$q.notify({
+              color: 'red-5',
+              textColor: 'white',
+              icon: 'fas fa-exclamation-triangle',
+              message: 'Failed'
+            })
+          }
         })
-      } else {
-        this.$q.notify({
-          color: 'green-4',
-          textColor: 'white',
-          icon: 'fas fa-check-circle',
-          message: 'Submitted'
-        })
-      }
     },
 
     onReset () {
     },
 
-    filterFn (val, update) {
+    filterTeacherFn (val, update) {
+      const self = this
       update(() => {
         const needle = val.toLowerCase()
-        this.teachers = this.teachers.filter(v => v.toLowerCase().indexOf(needle) > -1)
+        self.teacherOptions = teacherOptions.filter((option) => option.label.toLowerCase().indexOf(needle) > -1)
       })
+    },
+
+    filterSubjectFn (val, update) {
+      const self = this
+      update(() => {
+        const needle = val.toLowerCase()
+        self.subjectOptions = subjectOptions.filter((option) => option.label.toLowerCase().indexOf(needle) > -1)
+      })
+    },
+
+    initData () {
+      axios.get('/api/teacher/findAll')
+        .then(function (response) {
+          if (response.status === 200) {
+            response.data.forEach(teacher => {
+              teacherOptions.push({
+                label: teacher.lastName + ', ' + teacher.firstName + ' ' + teacher.middleName,
+                value: teacher
+              })
+            })
+          }
+        })
+
+      axios.get('/api/subject/findAll')
+        .then(function (response) {
+          if (response.status === 200) {
+            response.data.forEach(subject => {
+              subjectOptions.push({
+                label: subject.code,
+                value: subject
+              })
+            })
+          }
+        })
     }
+  },
+
+  created: function () {
+    this.initData()
   }
 }
 </script>
