@@ -20,8 +20,9 @@
         input-debounce="0"
         :options="teacherOptions"
         @filter="filterTeacherFn"
-        label="Teacher"
         emit-value
+        map-options
+        label="Teacher"
       >
         <template v-slot:no-option>
           <q-item>
@@ -69,6 +70,7 @@
         :options="subjectOptions"
         @filter="filterSubjectFn"
         emit-value
+        map-options
         label="Subject"
       >
         <template v-slot:no-option>

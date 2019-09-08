@@ -21,6 +21,7 @@
         :options="options"
         @filter="filterFn"
         emit-value
+        map-options
         label="Teacher"
       >
         <template v-slot:no-option>
@@ -85,34 +86,35 @@ export default {
   },
   methods: {
     onSubmit () {
-      const self = this
-      this.teacher.timeTables = self.timeTables.map(value => {
-        return {
-          from: moment(value.from).valueOf(),
-          to: moment(value.to).valueOf()
-        }
-      })
-
-      if (this.teacher.id !== 0) {
-        axios.post('/api/teacher/save', this.teacher)
-          .then(function (response) {
-            if (response.status === 200) {
-              self.$q.notify({
-                color: 'green-4',
-                textColor: 'white',
-                icon: 'fas fa-check-circle',
-                message: 'Submitted'
-              })
-            } else {
-              self.$q.notify({
-                color: 'red-5',
-                textColor: 'white',
-                icon: 'fas fa-exclamation-triangle',
-                message: 'Failed'
-              })
-            }
-          })
-      }
+      console.log(this.teacher)
+      // const self = this
+      // this.teacher.timeTables = self.timeTables.map(value => {
+      //   return {
+      //     from: moment(value.from).valueOf(),
+      //     to: moment(value.to).valueOf()
+      //   }
+      // })
+      //
+      // if (this.teacher.id !== 0) {
+      //   axios.post('/api/teacher/save', this.teacher)
+      //     .then(function (response) {
+      //       if (response.status === 200) {
+      //         self.$q.notify({
+      //           color: 'green-4',
+      //           textColor: 'white',
+      //           icon: 'fas fa-check-circle',
+      //           message: 'Submitted'
+      //         })
+      //       } else {
+      //         self.$q.notify({
+      //           color: 'red-5',
+      //           textColor: 'white',
+      //           icon: 'fas fa-exclamation-triangle',
+      //           message: 'Failed'
+      //         })
+      //       }
+      //     })
+      // }
     },
 
     onReset () {
