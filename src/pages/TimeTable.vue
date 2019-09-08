@@ -87,7 +87,7 @@ export default {
   methods: {
     onSubmit () {
       const self = this
-      this.teacher.timeTables = self.timeTables.map(value => {
+      this.teacher.timeTables = this.timeTables.map(value => {
         return {
           from: moment(value.from).valueOf(),
           to: moment(value.to).valueOf()

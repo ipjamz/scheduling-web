@@ -91,10 +91,6 @@
         :selected.sync="selectedTimeTable"
       />
 
-      <div class="q-mt-md">
-        Selected: {{ JSON.stringify(selectedTimeTable.to) }}
-      </div>
-
       <div>
         <q-btn label="Submit" type="submit" color="primary"/>
         <q-btn label="Reset" type="reset" color="primary" flat class="q-ml-sm"/>
@@ -145,8 +141,8 @@ export default {
       teacherOptions: teacherOptions,
       subjectOptions: subjectOptions,
       columns: [
-        { name: 'to', label: 'To', align: 'left', field: 'to', sortable: true },
-        { name: 'from', label: 'From', align: 'left', field: 'from', sortable: true }
+        { name: 'from', label: 'From', align: 'left', field: 'from', sortable: true },
+        { name: 'to', label: 'To', align: 'left', field: 'to', sortable: true }
       ],
       emptyField: 'Please fill this field.'
 
@@ -205,6 +201,12 @@ export default {
         .then(function (response) {
           if (response.status === 200) {
             response.data.forEach(teacher => {
+              teacher.timeTables = teacher.timeTables.map(value => {
+                return {
+                  from: moment(value.from).format('YYYY-MM-DD'),
+                  to: moment(value.to).format('YYYY-MM-DD')
+                }
+              })
               teacherOptions.push({
                 label: teacher.lastName + ', ' + teacher.firstName + ' ' + teacher.middleName,
                 value: teacher
