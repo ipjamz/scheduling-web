@@ -5,23 +5,11 @@ const routes = [
     children: [
       {
         path: '',
-        component: () => import('pages/Index.vue')
+        component: () => import('pages/Login.vue')
       },
       {
-        path: '/teacher',
-        component: () => import('pages/Teacher.vue')
-      },
-      {
-        path: '/time_table',
-        component: () => import('pages/TimeTable.vue')
-      },
-      {
-        path: '/subject',
-        component: () => import('pages/Subject.vue')
-      },
-      {
-        path: '/schedule',
-        component: () => import('pages/Schedule.vue')
+        path: '/main',
+        component: () => import('pages/Main.vue')
       }
     ]
   }
