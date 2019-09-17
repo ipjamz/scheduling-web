@@ -9,11 +9,9 @@
       </q-toolbar>
     </q-header>
 
-    <div class="row justify-center">
-      <q-page-container>
-        <router-view></router-view>
-      </q-page-container>
-    </div>
+    <q-page-container>
+      <router-view></router-view>
+    </q-page-container>
   </q-layout>
 </template>
 

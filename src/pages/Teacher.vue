@@ -1,109 +1,52 @@
 <template>
-  <div class="q-pa-md" style="max-width: 400px">
-
-    <div class="text-h5">
-      Teacher Form
+  <div class="row q-pa-md">
+    <div class="col-3">
     </div>
-
-    <q-form
-      @submit="onSubmit"
-      @reset="onReset"
-      class="q-gutter-md"
-    >
-      <q-input
-        filled
-        v-model="teacher.firstName"
-        label="First Name"
-        lazy-rules
-        :rules="[ val => val && val.length > 0 || emptyField]"
+    <div class="col">
+      <q-table
+        title="Teacher's Approval"
+        class="q-mt-md"
+        :data="data"
+        :columns="columns"
+        row-key="name"
+        selection="single"
+        :selected.sync="selected"
       />
-
-      <q-input
-        filled
-        v-model="teacher.middleName"
-        label="Middle Name"
-        lazy-rules
-        :rules="[ val => val && val.length > 0 || emptyField]"
-      />
-
-      <q-input
-        filled
-        v-model="teacher.lastName"
-        label="Last Name"
-        lazy-rules
-        :rules="[ val => val && val.length > 0 || emptyField]"
-      />
-
-      <q-input
-        filled
-        v-model="teacher.postNominal"
-        label="Post Nominal"
-      />
-
-      <q-input
-        filled
-        v-model="teacher.department"
-        label="Department"
-        lazy-rules
-        :rules="[ val => val && val.length > 0 || emptyField]"
-      />
-
-      <div>
-        <q-btn label="Submit" type="submit" color="primary"/>
-        <q-btn label="Reset" type="reset" color="primary" flat class="q-ml-sm"/>
+      <div class="q-mt-md">
+        <q-btn class="q-mr-md" label="Approve" color="primary" @click="onApprove"/>
+        <q-btn flat label="Decline" @click="onDecline"/>
       </div>
-    </q-form>
-
+    </div>
+    <div class="col-3">
+    </div>
   </div>
-
 </template>
 
 <script>
-import axios from 'axios'
-
 export default {
   name: 'Teacher',
-  data () {
+  data: function () {
     return {
-      teacher: {
-        firstName: '',
-        middleName: '',
-        lastName: '',
-        postNominal: '',
-        department: ''
-      },
-      emptyField: 'Please fill this field.'
+      selected: [],
+      columns: [
+        { name: 'studentName', required: true, label: 'Student Name', align: 'left', sortable: true },
+        { name: 'studentContactNo', required: true, label: 'Student Contact No.', align: 'left', sortable: true },
+        { name: 'studentYear', required: true, label: 'Student Year', align: 'left', sortable: true },
+        { name: 'studentCourse', required: true, label: 'Student Course', align: 'left', sortable: true },
+        { name: 'subject', required: true, label: 'Subject', align: 'left', sortable: true },
+        { name: 'dayOfWeek', required: true, label: 'Day of Week', align: 'left', sortable: true },
+        { name: 'scheduleStatus', required: true, label: 'Schedule Status', align: 'left', sortable: true },
+        { name: 'from', required: true, label: 'From', align: 'left', sortable: true },
+        { name: 'to', required: true, label: 'To', align: 'left', sortable: true }
+      ]
     }
   },
   methods: {
-    onSubmit () {
-      var self = this
-      axios.post('/api/teacher/save', this.teacher)
-        .then(function (response) {
-          if (response.status === 200) {
-            self.$q.notify({
-              color: 'green-4',
-              textColor: 'white',
-              icon: 'fas fa-check-circle',
-              message: 'Submitted'
-            })
-          } else {
-            self.$q.notify({
-              color: 'red-5',
-              textColor: 'white',
-              icon: 'fas fa-exclamation-triangle',
-              message: 'Failed'
-            })
-          }
-        })
-    },
+    onApprove: function () {
 
-    onReset () {
-      this.teacher.firstName = ''
-      this.teacher.middleName = ''
-      this.teacher.lastName = ''
-      this.teacher.postNominal = ''
-      this.teacher.department = ''
+    },
+    onDecline: function () {
+
     }
   }
 }

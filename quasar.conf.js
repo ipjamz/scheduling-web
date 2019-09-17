@@ -91,6 +91,7 @@ module.exports = function (ctx) {
     },
 
     devServer: {
+      port: 8090,
       proxy: {
         // proxy all requests starting with /api to jsonplaceholder
         '/api': {
