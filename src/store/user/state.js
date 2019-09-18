@@ -7,7 +7,7 @@ export default {
     postNominal: '',
     contact: '',
     department: '',
-    userType: '',
+    userType: 'TEACHER',
     username: '',
     password: ''
   }

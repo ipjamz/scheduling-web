@@ -9,7 +9,15 @@ const routes = [
       },
       {
         path: '/main',
-        component: () => import('pages/Main.vue')
+        component: () => import('pages/Main.vue'),
+        children: [{
+          path: '/teacher',
+          component: () => import('pages/Teacher.vue')
+        },
+        {
+          path: '/working_student',
+          component: () => import('pages/WorkingStudent.vue')
+        }]
       }
     ]
   }

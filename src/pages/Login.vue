@@ -130,6 +130,7 @@ export default {
         }
       }).then(function (response) {
         if (response.status === 200) {
+          self.userState.set(response.data)
           self.$router.push('main')
         } else {
           self.$q.notify({

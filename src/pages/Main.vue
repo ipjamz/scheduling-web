@@ -1,7 +1,9 @@
 <template>
-  <div class="">
-    <!--      <working-student></working-student>-->
+  <div v-if="user.userType === 'TEACHER'">
     <teacher></teacher>
+  </div>
+  <div v-else>
+    <working-student></working-student>
   </div>
 </template>
 
@@ -11,13 +13,21 @@
 <script>
 
 import Teacher from './Teacher'
+import WorkingStudent from './WorkingStudent'
 
 export default {
   name: 'Main',
-  components: { Teacher },
+  components: { WorkingStudent, Teacher },
   data () {
     return {}
   },
-  methods: {}
+  methods: {},
+  computed: {
+    user: {
+      get: function () {
+        return this.$store.state.user
+      }
+    }
+  }
 }
 </script>
