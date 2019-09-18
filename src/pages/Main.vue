@@ -25,7 +25,7 @@ export default {
   computed: {
     user: {
       get: function () {
-        return this.$store.state.user
+        return this.$store.state.user.user
       }
     }
   }

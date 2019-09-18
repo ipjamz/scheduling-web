@@ -14,7 +14,7 @@
             v-model="loginUser.username"
             label="Username"
             lazy-rules
-            :rules="[ val => val && val.length > 0 || emptyField]"
+            :rules="[val => !!val || 'Field is required']"
           />
 
           <q-input
@@ -23,7 +23,7 @@
             type="password"
             label="Password"
             lazy-rules
-            :rules="[ val => val && val.length > 0 || emptyField]"
+            :rules="[val => !!val || 'Field is required']"
           />
 
           <q-btn class="q-mr-md" label="Login" type="submit" color="primary"/>
@@ -92,20 +92,20 @@ export default {
   data: function () {
     return {
       loginUser: {
-        username: '',
-        password: ''
+        username: null,
+        password: null
       },
       user: {
-        id: '',
-        firstName: '',
-        middleName: '',
-        lastName: '',
-        postNominal: '',
-        contact: '',
-        department: '',
-        userType: '',
-        username: '',
-        password: ''
+        id: null,
+        firstName: null,
+        middleName: null,
+        lastName: null,
+        postNominal: null,
+        contact: null,
+        department: null,
+        userType: null,
+        username: null,
+        password: null
       },
       prompt: false,
       options: [
@@ -130,13 +130,13 @@ export default {
         }
       }).then(function (response) {
         if (response.status === 200) {
-          self.userState.set(response.data)
+          self.$store.commit('user/updateUserState', response.data)
           self.$router.push('main')
         } else {
           self.$q.notify({
             color: 'red-5',
-            textColor: 'white',
             icon: 'fas fa-exclamation-triangle',
+            textColor: 'white',
             message: 'Username/Password incorrect.'
           })
         }
@@ -172,18 +172,8 @@ export default {
       this.user.department = ''
       this.user.postNominal = ''
       this.user.userType = ''
-      this.user.userName = ''
+      this.user.username = ''
       this.user.password = ''
-    }
-  },
-  computed: {
-    userState: {
-      get: function () {
-        return this.$store.state.user
-      },
-      set: function (val) {
-        this.$store.commit('user/updateUserState', val)
-      }
     }
   }
 }

@@ -1,14 +1,14 @@
 export default {
   user: {
-    id: '',
-    firstName: '',
-    middleName: '',
-    lastName: '',
-    postNominal: '',
-    contact: '',
-    department: '',
-    userType: 'TEACHER',
-    username: '',
-    password: ''
+    id: null,
+    firstName: null,
+    middleName: null,
+    lastName: null,
+    postNominal: null,
+    contact: null,
+    department: null,
+    userType: null,
+    username: null,
+    password: null
   }
 }
