@@ -154,10 +154,14 @@ export default {
   methods: {
     onSubmit () {
       const self = this
+      console.log(this.user)
+
       this.appointment.teacherId = this.user.id
       this.appointment.teacherName = this.user.lastName + ', ' + this.user.firstName + ' ' + this.user.lastName
       this.appointment.from = moment(this.fromDateString, 'HH:mm').valueOf()
       this.appointment.to = moment(this.toDateString, 'HH:mm').valueOf()
+      console.log(this.appointment)
+
       axios.post('/api/appointment/save', this.appointment).then(function (response) {
         if (response.status === 200) {
           self.$q.notify({
@@ -186,21 +190,20 @@ export default {
     initData () {
       axios.get('/api/user/findByUserType', {
         params: {
-          userType: this.userSate.userType
+          userType: 'TEACHER'
         }
       }).then(function (response) {
         response.data.forEach(user => {
-          console.log(user)
-          // userOptions.push({
-          //   label: user.lastName + ', ' + user.firstName + ' ' + user.lastName,
-          //   value: user
-          // })
+          userOptions.push({
+            label: user.lastName + ', ' + user.firstName + ' ' + user.lastName,
+            value: user
+          })
         })
       })
     }
   },
   computed: {
-    userSate: {
+    userState: {
       get: function () {
         return this.$store.state.user.user
       }

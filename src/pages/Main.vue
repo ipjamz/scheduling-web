@@ -1,10 +1,4 @@
 <template>
-<!--  <div v-if="user.userType === 'TEACHER'">-->
-<!--    <teacher></teacher>-->
-<!--  </div>-->
-<!--  <div v-else>-->
-<!--    <working-student></working-student>-->
-<!--  </div>-->
   <router-view />
 </template>
 
@@ -29,8 +23,10 @@ export default {
   created () {
     if (this.user.userType === 'TEACHER') {
       this.$router.push('/teacher')
-    } else {
+    } else if (this.user.userType === 'WORKING_STUDENT') {
       this.$router.push('/working_student')
+    } else {
+      this.$router.push('/')
     }
   }
 }
