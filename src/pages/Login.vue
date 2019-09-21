@@ -8,23 +8,38 @@
           @submit="onSubmit"
           class="q-mb-md"
         >
+          <q-select class="q-mb-md" v-model="loginUser.userType" :options="options" label="User Type"
+                    emit-value
+                    :option-value="opt => opt === null ? null : opt.id"
+                    :option-label="opt => opt === null ? '- Null -' : opt.desc"
+                    map-options/>
+          <div v-if="loginUser.userType === 'TEACHER'">
+            <q-input
+              filled
+              v-model="loginUser.username"
+              label="Username"
+              lazy-rules
+              :rules="[val => !!val || 'Field is required']"
+            />
 
-          <q-input
-            filled
-            v-model="loginUser.username"
-            label="Username"
-            lazy-rules
-            :rules="[val => !!val || 'Field is required']"
-          />
-
-          <q-input
-            filled
-            v-model="loginUser.password"
-            type="password"
-            label="Password"
-            lazy-rules
-            :rules="[val => !!val || 'Field is required']"
-          />
+            <q-input
+              filled
+              v-model="loginUser.password"
+              type="password"
+              label="Password"
+              lazy-rules
+              :rules="[val => !!val || 'Field is required']"
+            />
+          </div>
+          <div v-else>
+            <q-input
+              filled
+              v-model="loginUser.username"
+              label="Student ID"
+              lazy-rules
+              :rules="[val => !!val || 'Field is required']"
+            />
+          </div>
 
           <q-btn class="q-mr-md" label="Login" type="submit" color="primary"/>
           <q-btn flat label="Sign up" @click="prompt = true"/>
@@ -39,13 +54,25 @@
             <q-card-section>
               <div class="q-mb-md">
                 <div class="text-h6">User Security</div>
-                <q-input dense v-model="user.username" autofocus @keyup.enter="prompt = false" label="Username"
-                         :rules="[val => !!val || 'Field is required']"
-                />
-                <q-input dense v-model="user.password" @keyup.enter="prompt = false" label="Password"
-                         :rules="[val => !!val || 'Field is required']"
+                <q-select class="q-mb-md" v-model="user.userType" :options="options" label="User Type"
+                          emit-value
+                          :option-value="opt => opt === null ? null : opt.id"
+                          :option-label="opt => opt === null ? '- Null -' : opt.desc"
+                          map-options/>
+                <div v-if="user.userType === 'TEACHER'">
+                  <q-input dense v-model="user.username" autofocus @keyup.enter="prompt = false" label="Username"
+                           :rules="[val => !!val || 'Field is required']"
+                  />
+                  <q-input dense v-model="user.password" @keyup.enter="prompt = false" label="Password"
+                           :rules="[val => !!val || 'Field is required']"
 
-                         type="password"/>
+                           type="password"/>
+                </div>
+                <div v-else>
+                  <q-input dense v-model="user.username" autofocus @keyup.enter="prompt = false" label="Student ID"
+                           :rules="[val => !!val || 'Field is required']"
+                  />
+                </div>
               </div>
               <div class="text-h6">User Details</div>
               <q-input dense v-model="user.firstName" @keyup.enter="prompt = false" label="First Name"
@@ -64,11 +91,6 @@
               <q-input dense v-model="user.department" @keyup.enter="prompt = false" label="Department"
                        :rules="[val => !!val || 'Field is required']"
               />
-              <q-select v-model="user.userType" :options="options" label="User Type"
-                        emit-value
-                        :option-value="opt => opt === null ? null : opt.id"
-                        :option-label="opt => opt === null ? '- Null -' : opt.desc"
-                        map-options/>
             </q-card-section>
 
             <q-card-actions align="right" class="text-primary">
@@ -93,7 +115,8 @@ export default {
     return {
       loginUser: {
         username: null,
-        password: null
+        password: null,
+        userType: null
       },
       user: {
         id: null,
@@ -105,7 +128,8 @@ export default {
         department: null,
         userType: null,
         username: null,
-        password: null
+        password: null,
+        schedules: []
       },
       prompt: false,
       options: [
@@ -123,6 +147,9 @@ export default {
   methods: {
     onSubmit: function () {
       const self = this
+      if (this.loginUser.userType !== 'TEACHER') {
+        this.loginUser.password = 'student'
+      }
       axios.get('/api/user/validate', {
         params: {
           hospitalId: this.loginUser.username,
@@ -144,6 +171,9 @@ export default {
     },
     onRegister: function () {
       const self = this
+      if (this.user.userType !== 'TEACHER') {
+        this.user.password = 'student'
+      }
       axios.post('/api/user/register', this.user).then(function (response) {
         if (response.status === 200) {
           self.$q.notify({

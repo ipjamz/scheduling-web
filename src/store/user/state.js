@@ -9,6 +9,7 @@ export default {
     department: null,
     userType: null,
     username: null,
-    password: null
+    password: null,
+    schedules: []
   }
 }

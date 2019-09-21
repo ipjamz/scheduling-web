@@ -2,58 +2,76 @@
   <div class="row q-pa-md">
     <div class="col-4"></div>
     <div class="col">
-      <div class="text-h5 q-mb-md">Schedule Information</div>
       <q-form
         @submit="onSubmit"
         class="q-mb-md"
       >
-        <q-input
-          filled
-          v-model="schedule.teacherName"
-          label="Teacher Name"
-          lazy-rules
-          :rules="[val => !!val || 'Field is required']"
+
+        <q-table
+          title="Teachers Schedule"
+          :data="user.schedules"
+          :columns="columns"
+          row-key="name"
         />
+
+        <div class="text-h5 q-mt-md">Appointment Information</div>
+
+        <q-select
+          class="q-mb-md"
+          v-model="user"
+          use-input
+          hide-selected
+          fill-input
+          input-debounce="0"
+          :options="options"
+          @filter="filterFn"
+          label="Teacher Name"
+          emit-value
+          map-options>
+          <template v-slot:no-option>
+            <q-item>
+              <q-item-section class="text-grey">
+                No results
+              </q-item-section>
+            </q-item>
+          </template>
+        </q-select>
+
         <q-input
           filled
-          v-model="schedule.studentName"
+          v-model="appointment.studentName"
           label="Student Name"
           lazy-rules
           :rules="[val => !!val || 'Field is required']"
         />
         <q-input
           filled
-          v-model="schedule.studentContactNo"
+          v-model="appointment.studentContactNo"
           label="Student Contact No."
           lazy-rules
           :rules="[val => !!val || 'Field is required']"
         />
         <q-input
           filled
-          v-model="schedule.studentYear"
+          v-model="appointment.studentYear"
           label="Student Year"
           lazy-rules
           :rules="[val => !!val || 'Field is required']"
         />
         <q-input
           filled
-          v-model="schedule.studentCourse"
+          v-model="appointment.studentCourse"
           label="Student Course"
           lazy-rules
           :rules="[val => !!val || 'Field is required']"
         />
         <q-input
           filled
-          v-model="schedule.subject"
+          v-model="appointment.subject"
           label="Subject"
           lazy-rules
           :rules="[val => !!val || 'Field is required']"
         />
-        <q-select class="q-mb-md" v-model="schedule.dayOfWeek" :options="options" label="Day of Week"
-                  emit-value
-                  :option-value="opt => opt === null ? null : opt.id"
-                  :option-label="opt => opt === null ? '- Null -' : opt.desc"
-                  map-options/>
         <q-input filled v-model="fromDateString" mask="time" :rules="['time']" label="From" type="time">
           <template v-slot:append>
             <q-icon name="access_time" class="cursor-pointer">
@@ -85,11 +103,13 @@
 import axios from 'axios'
 import moment from 'moment'
 
+const userOptions = []
+
 export default {
-  name: 'WorkingStudent',
+  name: 'Appointment',
   data: function () {
     return {
-      schedule: {
+      appointment: {
         id: null,
         teacherId: null,
         teacherName: null,
@@ -107,48 +127,38 @@ export default {
         createdBy: null,
         dateCreated: moment().valueOf()
       },
+      user: {
+        id: null,
+        firstName: null,
+        middleName: null,
+        lastName: null,
+        postNominal: null,
+        contact: null,
+        department: null,
+        userType: null,
+        username: null,
+        password: null,
+        schedules: []
+      },
       fromDateString: null,
       toDateString: null,
-      options: [
-        {
-          id: 'SUNDAY',
-          desc: 'Sunday'
-        },
-        {
-          id: 'MONDAY',
-          desc: 'Monday'
-        },
-        {
-          id: 'TUESDAY',
-          desc: 'Tuesday'
-        },
-        {
-          id: 'WEDNESDAY',
-          desc: 'Wednesday'
-        },
-        {
-          id: 'THURSDAY',
-          desc: 'Thursday'
-        },
-        {
-          id: 'FRIDAY',
-          desc: 'Friday'
-        },
-        {
-          id: 'SATURDAY',
-          desc: 'Saturday'
-        }
+      options: userOptions,
+      columns: [
+        { name: 'dayOfWeek', required: true, label: 'Day of Week', align: 'left', sortable: true },
+        { name: 'from', required: true, label: 'From', align: 'left', sortable: true, format: (val) => moment(val).format('HH:mm') },
+        { name: 'to', required: true, label: 'To', align: 'left', sortable: true, format: (val) => moment(val).format('HH:mm') },
+        { name: 'location', required: true, label: 'Location', align: 'left', sortable: true }
       ]
     }
   },
   methods: {
-    onSubmit: function () {
+    onSubmit () {
       const self = this
-      this.schedule.from = moment(this.fromDateString, 'HH:mm').valueOf()
-      this.schedule.to = moment(this.toDateString, 'HH:mm').valueOf()
-      this.schedule.createdBy = this.user.username
-      console.log(this.schedule)
-      axios.post('/api/schedule/save', this.schedule).then(function (response) {
+      this.appointment.teacherId = this.user.id
+      this.appointment.teacherName = this.user.lastName + ', ' + this.user.firstName + ' ' + this.user.lastName
+      this.appointment.from = moment(this.fromDateString, 'HH:mm').valueOf()
+      this.appointment.to = moment(this.toDateString, 'HH:mm').valueOf()
+      axios.post('/api/appointment/save', this.appointment).then(function (response) {
         if (response.status === 200) {
           self.$q.notify({
             color: 'green-4',
@@ -165,14 +175,39 @@ export default {
           })
         }
       })
+    },
+    filterFn (val, update) {
+      const self = this
+      update(() => {
+        const needle = val.toLowerCase()
+        self.options = userOptions.filter((option) => option.label.toLowerCase().indexOf(needle) > -1)
+      })
+    },
+    initData () {
+      axios.get('/api/user/findByUserType', {
+        params: {
+          userType: this.userSate.userType
+        }
+      }).then(function (response) {
+        response.data.forEach(user => {
+          console.log(user)
+          // userOptions.push({
+          //   label: user.lastName + ', ' + user.firstName + ' ' + user.lastName,
+          //   value: user
+          // })
+        })
+      })
     }
   },
   computed: {
-    user: {
+    userSate: {
       get: function () {
         return this.$store.state.user.user
       }
     }
+  },
+  created () {
+    this.initData()
   }
 }
 </script>

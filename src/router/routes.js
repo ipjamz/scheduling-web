@@ -10,14 +10,30 @@ const routes = [
       {
         path: '/main',
         component: () => import('pages/Main.vue'),
-        children: [{
-          path: '/teacher',
-          component: () => import('pages/Teacher.vue')
-        },
-        {
-          path: '/working_student',
-          component: () => import('pages/WorkingStudent.vue')
-        }]
+        children: [
+          {
+            path: '/teacher',
+            component: () => import('pages/teacher/Teacher.vue'),
+            children: [{
+              path: '/schedule',
+              component: () => import('pages/teacher/Schedule.vue')
+            },
+            {
+              path: '/appointment_list',
+              component: () => import('pages/teacher/AppointmentList.vue')
+            }
+            ]
+          },
+          {
+            path: '/working_student',
+            component: () => import('pages/working_student/WorkingStudent.vue'),
+            children: [
+              {
+                path: '/appointment',
+                component: () => import('pages/working_student/Appointment.vue')
+              }
+            ]
+          }]
       }
     ]
   }

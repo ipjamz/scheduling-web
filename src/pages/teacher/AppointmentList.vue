@@ -24,7 +24,7 @@
 
 <script>
 export default {
-  name: 'Teacher',
+  name: 'AppointmentList',
   data: function () {
     return {
       selected: [],
@@ -38,7 +38,8 @@ export default {
         { name: 'scheduleStatus', required: true, label: 'Schedule Status', align: 'left', sortable: true },
         { name: 'from', required: true, label: 'From', align: 'left', sortable: true },
         { name: 'to', required: true, label: 'To', align: 'left', sortable: true }
-      ]
+      ],
+      data: []
     }
   },
   methods: {

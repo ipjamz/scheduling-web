@@ -56,7 +56,10 @@ module.exports = function (ctx) {
         'QCardSection',
         'QCardActions',
         'QTime',
-        'QPopupProxy'
+        'QPopupProxy',
+        'QSplitter',
+        'QTabs',
+        'QRouteTab'
       ],
 
       directives: [

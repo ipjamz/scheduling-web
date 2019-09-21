@@ -1,10 +1,11 @@
 <template>
-  <div v-if="user.userType === 'TEACHER'">
-    <teacher></teacher>
-  </div>
-  <div v-else>
-    <working-student></working-student>
-  </div>
+<!--  <div v-if="user.userType === 'TEACHER'">-->
+<!--    <teacher></teacher>-->
+<!--  </div>-->
+<!--  <div v-else>-->
+<!--    <working-student></working-student>-->
+<!--  </div>-->
+  <router-view />
 </template>
 
 <style>
@@ -12,12 +13,8 @@
 
 <script>
 
-import Teacher from './Teacher'
-import WorkingStudent from './WorkingStudent'
-
 export default {
   name: 'Main',
-  components: { WorkingStudent, Teacher },
   data () {
     return {}
   },
@@ -27,6 +24,13 @@ export default {
       get: function () {
         return this.$store.state.user.user
       }
+    }
+  },
+  created () {
+    if (this.user.userType === 'TEACHER') {
+      this.$router.push('/teacher')
+    } else {
+      this.$router.push('/working_student')
     }
   }
 }
