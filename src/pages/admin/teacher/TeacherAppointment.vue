@@ -33,13 +33,63 @@ export default {
       selected: [],
       columns: [
         { name: 'id', required: true, label: 'Appointment ID', align: 'left', sortable: true, field: row => row.id },
-        { name: 'studentName', required: true, label: 'Student Name', align: 'left', sortable: true, field: row => row.studentName },
-        { name: 'studentContactNo', required: true, label: 'Student Contact No.', align: 'left', sortable: true, field: row => row.studentContactNo },
-        { name: 'studentYear', required: true, label: 'Student Year', align: 'left', sortable: true, field: row => row.studentYear },
-        { name: 'studentCourse', required: true, label: 'Student Course', align: 'left', sortable: true, field: row => row.studentCourse },
-        { name: 'subject', required: true, label: 'Subject', align: 'left', sortable: true, field: row => row.subject },
-        { name: 'dayOfWeek', required: true, label: 'Day of Week', align: 'left', sortable: true, field: row => row.dayOfWeek },
-        { name: 'scheduleStatus', required: true, label: 'Schedule Status', align: 'left', sortable: true, field: row => row.scheduleStatus },
+        {
+          name: 'studentName',
+          required: true,
+          label: 'Student Name',
+          align: 'left',
+          sortable: true,
+          field: row => row.studentName
+        },
+        {
+          name: 'studentContactNo',
+          required: true,
+          label: 'Student Contact No.',
+          align: 'left',
+          sortable: true,
+          field: row => row.studentContactNo
+        },
+        {
+          name: 'studentYear',
+          required: true,
+          label: 'Student Year',
+          align: 'left',
+          sortable: true,
+          field: row => row.studentYear
+        },
+        {
+          name: 'studentCourse',
+          required: true,
+          label: 'Student Course',
+          align: 'left',
+          sortable: true,
+          field: row => row.studentCourse
+        },
+        {
+          name: 'subject',
+          required: true,
+          label: 'Subject',
+          align: 'left',
+          sortable: true,
+          field: row => row.subject
+        },
+        {
+          name: 'appointmentStatus',
+          required: true,
+          label: 'Appointment Status',
+          align: 'left',
+          sortable: true,
+          field: row => row.appointmentStatus
+        },
+        {
+          name: 'date',
+          required: true,
+          label: 'Date',
+          align: 'left',
+          sortable: true,
+          field: row => row.date,
+          format: (val) => moment(val).format('MM/DD/YYYY')
+        },
         {
           name: 'from',
           required: true,
@@ -78,22 +128,22 @@ export default {
             icon: 'fas fa-check-circle',
             message: 'Success.'
           })
-        } else {
-          self.$q.notify({
-            color: 'red-5',
-            textColor: 'white',
-            icon: 'fas fa-exclamation-triangle',
-            message: 'Please contact administrator.'
-          })
+          self.initData()
         }
+      }).catch(error => {
+        console.log(error.response)
+        self.$q.notify({
+          color: 'red-5',
+          textColor: 'white',
+          icon: 'fas fa-exclamation-triangle',
+          message: error.response.data.message
+        })
       })
     },
     onDecline: function () {
       const self = this
-      this.updateStatusRequest.id = this.selected.id
+      this.updateStatusRequest.id = this.selected[0].id
       this.updateStatusRequest.appointmentStatus = 'DECLINED'
-
-      console.log(this.selected.id)
 
       axios.post('/api/appointment/updateStatus', this.updateStatusRequest).then(function (response) {
         if (response.status === 200) {
@@ -103,14 +153,16 @@ export default {
             icon: 'fas fa-check-circle',
             message: 'Success.'
           })
-        } else {
-          self.$q.notify({
-            color: 'red-5',
-            textColor: 'white',
-            icon: 'fas fa-exclamation-triangle',
-            message: 'Please contact administrator.'
-          })
+          self.initData()
         }
+      }).catch(error => {
+        console.log(error.response)
+        self.$q.notify({
+          color: 'red-5',
+          textColor: 'white',
+          icon: 'fas fa-exclamation-triangle',
+          message: error.response.data.message
+        })
       })
     },
     initData () {
@@ -120,19 +172,19 @@ export default {
           id: this.userState.id
         }
       }).then(function (response) {
-        response.data.forEach(appointment => {
-          self.data.push({
+        self.data = response.data.map((appointment) => {
+          return {
             id: appointment.id,
             studentName: appointment.studentName,
             studentContactNo: appointment.studentContactNo,
             studentYear: appointment.studentYear,
             studentCourse: appointment.studentCourse,
             subject: appointment.subject,
-            dayOfWeek: appointment.dayOfWeek,
-            scheduleStatus: appointment.scheduleStatus,
+            date: appointment.date,
+            appointmentStatus: appointment.appointmentStatus,
             from: moment(appointment.from).format('HH:mm'),
             to: moment(appointment.to).format('HH:mm')
-          })
+          }
         })
       })
     }

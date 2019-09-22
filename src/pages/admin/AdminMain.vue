@@ -22,11 +22,9 @@ export default {
   },
   created () {
     if (this.user.userType === 'TEACHER') {
-      this.$router.push('/teacher')
+      this.$router.push('/admin/main/teacher')
     } else if (this.user.userType === 'WORKING_STUDENT') {
-      this.$router.push('/working_student')
-    } else {
-      this.$router.push('/')
+      this.$router.push('/admin/main/working_student')
     }
   }
 }

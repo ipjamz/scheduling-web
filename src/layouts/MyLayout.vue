@@ -6,6 +6,10 @@
           Schedule Web
         </q-toolbar-title>
 
+        <q-tabs shrink stretch>
+          <q-route-tab name="admin" label="Admin" to="/admin" />
+          <q-route-tab name="student" label="Student" to="/student" />
+        </q-tabs>
       </q-toolbar>
     </q-header>
 
@@ -19,9 +23,9 @@
 export default {
   name: 'MyLayout',
   data () {
-    return {}
-  },
-  methods: {}
+    return {
+    }
+  }
 }
 </script>
 

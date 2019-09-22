@@ -3,6 +3,7 @@ import Vuex from 'vuex'
 
 // we first import the module
 import user from './user'
+import student from './student'
 
 Vue.use(Vuex)
 
@@ -10,7 +11,8 @@ export default function (/* { ssrContext } */) {
   const Store = new Vuex.Store({
     modules: {
       // then we reference it
-      user
+      user,
+      student
     },
 
     // enable strict mode (adds overhead!)
@@ -26,9 +28,10 @@ export default function (/* { ssrContext } */) {
   */
 
   if (process.env.DEV && module.hot) {
-    module.hot.accept(['./user'], () => {
+    module.hot.accept(['./user', './student'], () => {
       const newUser = require('./user').default
-      Store.hotUpdate({ modules: { user: newUser } })
+      const newStudent = require('./student').default
+      Store.hotUpdate({ modules: { user: newUser, student: newStudent } })
     })
   }
 

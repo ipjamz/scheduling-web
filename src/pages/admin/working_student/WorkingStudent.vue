@@ -10,8 +10,7 @@
           vertical
           class="text-grey-9"
         >
-          <q-route-tab name="schedule" icon="schedule" label="Add Schedule" to="/schedule"/>
-          <q-route-tab name="appointment" icon="schedule" label="Check Appointment" to="/appointment_list"/>
+          <q-route-tab name="report" icon="assessment" label="Reports" to="/admin/main/working_student/report"/>
         </q-tabs>
       </template>
 
@@ -25,14 +24,13 @@
 
 <script>
 export default {
-  name: 'Teacher',
+  name: 'WorkingStudent',
   data: function () {
     return {
-      tab: 'teacher',
+      tab: 'working_student',
       splitterModel: 20
     }
-  },
-  methods: {}
+  }
 }
 </script>
 
